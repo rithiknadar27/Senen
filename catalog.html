@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SENEN Catalog</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f8f8f8;
+      color: #333;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .header {
+      background-color: #000;
+      padding: 15px 0;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header img {
+      height: 30px;
+    }
+
+    .section {
+      max-width: 1400px;
+      margin: 0 auto 30px;
+      padding: 0 20px;
+    }
+
+    .section-header-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 15px;
+    }
+
+    .section-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+
+    .product-image-container {
+      height: 250px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      background-color: #f0f0f0;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+
+    .product-info {
+      padding: 15px;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    .countdown-timer {
+      display: flex;
+      align-items: center;
+      font-size: 17px;
+      margin-left:10%;
+    }
+
+    .countdown-segment {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+
+    .countdown-value {
+      font-weight: 700;
+      color: #000;
+      margin: 0 2px;
+    }
+
+    .countdown-separator {
+      color: rgba(255, 255, 255, 0.7); 
+      font-size: 1em;
+      margin: 0 1px;
+      font-weight: normal;
+    }
+
+    .countdown-value {
+      font-weight: 700;
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .catalog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      
+      .product-image-container {
+        height: 200px;
+      }
+
+      .section-header-container {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="D:/Rithik/SenenCatalog/New/kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()"/>
+  </div>
+
+  <div class="section" id="latestDropSection">
+    <div class="section-header-container">
+      <h2 class="section-header">LATEST DROP</h2>
+    </div>
+    <div class="catalog-grid" id="latestDropGrid">
+      <div class="empty-state" id="latestDropEmpty" style="display: none;">
+        <h2>No Products Available</h2>
+        <p>There are currently no products in this section.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="mysteryBoxSection" style="display: none;">
+    <div class="section-header-container">
+      <h2 class="section-header">MYSTERY BOX</h2>
+      <div class="countdown-timer" id="countdownTimer"></div>
+    </div>
+    <div class="catalog-grid" id="mysteryBoxGrid">
+      <div class="empty-state" id="mysteryBoxEmpty" style="display: none;">
+        <h2>No Mystery Box Available</h2>
+        <p>Check back later for our next Mystery Box drop!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let db; // IndexedDB instance
+
+    function goToCatalog(){
+      window.location.href = 'catalog.html';
+    }
+
+    // Initialize the database
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('SenenProductsDB', 4);
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          
+          if (!db.objectStoreNames.contains('products')) {
+            db.createObjectStore('products', { keyPath: 'id' });
+          }
+          
+          if (!db.objectStoreNames.contains('productImages')) {
+            const store = db.createObjectStore('productImages', { keyPath: ['productId', 'index'] });
+            store.createIndex('byProduct', 'productId', { unique: false });
+          }
+        };
+        
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          resolve();
+        };
+        
+        request.onerror = (event) => {
+          console.error('Database error:', event.target.error);
+          reject(event.target.error);
+        };
+      });
+    }
+
+    // Get products from IndexedDB
+    function getProductsFromDB() {
+      return new Promise((resolve) => {
+        const transaction = db.transaction(['products'], 'readonly');
+        const store = transaction.objectStore('products');
+        const request = store.getAll();
+        
+        request.onsuccess = (event) => {
+          resolve(event.target.result || []);
+        };
+        
+        request.onerror = () => resolve([]);
+      });
+    }
+
+    // Get product images from IndexedDB
+    function getProductImages(productId) {
+      return new Promise((resolve) => {
+        const transaction = db.transaction(['productImages'], 'readonly');
+        const store = transaction.objectStore('productImages');
+        const index = store.index('byProduct');
+        const request = index.getAll(IDBKeyRange.only(productId));
+        
+        request.onsuccess = (event) => {
+          const images = (event.target.result || [])
+            .sort((a, b) => a.index - b.index)
+            .map(item => {
+              // Create object URL from Blob
+              if (item.imageBlob) {
+                return URL.createObjectURL(item.imageBlob);
+              }
+              // Fallback for old data format (base64)
+              return item.imageData;
+            });
+          resolve(images);
+        };
+        
+        request.onerror = () => resolve([]);
+      });
+    }
+
+    // Check if it's Friday and within the 24-hour window
+    function isFridayAndWithin24Hours() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 5 = Friday, 6 = Saturday
+      const hours = now.getHours();
+      
+      // If it's Friday (day 5) or Saturday before the same hour as now on Friday
+      // (meaning we're within 24 hours of Friday 00:00)
+      return day === 5 || (day === 6 && hours < now.getHours());
+    }
+
+    // Update countdown timer
+    function updateCountdown() {
+    const now = new Date();
+    const nextFriday = new Date();
+    
+    // Calculate days until next Friday
+    let daysUntilFriday = (5 - now.getDay() + 7) % 7;
+    
+    // If it's Saturday or we're past Friday 23:59:59, show countdown to next Friday
+    if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 24)) {
+      daysUntilFriday = (5 - now.getDay() + 7) % 7;
+    }
+    
+    // Set to next Friday at 00:00:00
+    nextFriday.setDate(now.getDate() + daysUntilFriday);
+    nextFriday.setHours(0, 0, 0, 0);
+    
+    // Calculate end of Friday (next Friday 23:59:59)
+    const endOfFriday = new Date(nextFriday);
+    endOfFriday.setHours(23, 59, 59, 999);
+    
+    // If we're within Friday (00:00:00 to 23:59:59)
+    if (now >= nextFriday && now <= endOfFriday) {
+      // Calculate time remaining until Friday ends
+      const diff = endOfFriday - now;
+      
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      const timerHTML = `
+        <span class="countdown-segment">
+          <span class="countdown-value">${hours.toString().padStart(2, '0')}</span>h
+        </span>
+        <span>:</span>
+        <span class="countdown-segment">
+          <span class="countdown-value">${minutes.toString().padStart(2, '0')}</span>m
+        </span>
+        <span>:</span>
+        <span class="countdown-segment">
+          <span class="countdown-value">${seconds.toString().padStart(2, '0')}</span>s
+        </span>
+      `;
+      
+      document.getElementById('countdownTimer').innerHTML = timerHTML;
+    } else {
+      // Calculate time until next Friday begins
+      const diff = nextFriday - now;
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      const timerHTML = `
+        <span class="countdown-segment">
+          <span class="countdown-value">${days.toString().padStart(2, '0')}</span>d
+        </span>
+        <span class="countdown-segment">
+          <span class="countdown-value">${hours.toString().padStart(2, '0')}</span>h
+        </span>
+        <span class="countdown-segment">
+          <span class="countdown-value">${minutes.toString().padStart(2, '0')}</span>m
+        </span>
+        <span class="countdown-segment">
+          <span class="countdown-value">${seconds.toString().padStart(2, '0')}</span>s
+        </span>
+        <span class="countdown-label">until Friday</span>
+      `;
+      
+      document.getElementById('countdownTimer').innerHTML = timerHTML;
+    }
+  }
+
+    // Load and render the catalog
+    async function loadCatalog() {
+      try {
+        await initDB();
+        const products = await getProductsFromDB();
+        const latestDropGrid = document.getElementById('latestDropGrid');
+        const mysteryBoxGrid = document.getElementById('mysteryBoxGrid');
+        const latestDropEmpty = document.getElementById('latestDropEmpty');
+        const mysteryBoxEmpty = document.getElementById('mysteryBoxEmpty');
+        const mysteryBoxSection = document.getElementById('mysteryBoxSection');
+
+        // Clear existing content
+        latestDropGrid.innerHTML = '';
+        mysteryBoxGrid.innerHTML = '';
+        
+        if (products.length === 0) {
+          latestDropEmpty.style.display = 'block';
+          return;
+        }
+        
+        // Check if we should show Mystery Box section
+        const showMysteryBox = isFridayAndWithin24Hours();
+        mysteryBoxSection.style.display = showMysteryBox? 'block' : 'none';
+        
+        // Start countdown timer if Mystery Box section is shown
+        if (showMysteryBox) {
+          setInterval(updateCountdown, 1000);
+          updateCountdown();
+        }
+        
+        // Split products into regular and mystery box
+        const regularProducts = [];
+        const mysteryBoxProducts = [];
+        
+        products.forEach(product => {
+          if (product.name.toLowerCase().includes('mystery box')) {
+            mysteryBoxProducts.push(product);
+          } else {
+            regularProducts.push(product);
+          }
+        });
+        
+        // Handle empty states
+        latestDropEmpty.style.display = regularProducts.length === 0 ? 'block' : 'none';
+        mysteryBoxEmpty.style.display = mysteryBoxProducts.length === 0 ? 'block' : 'none';
+        
+        // Sort products alphabetically
+        regularProducts.sort((a, b) => a.name.localeCompare(b.name));
+        mysteryBoxProducts.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Render regular products
+        for (const product of regularProducts) {
+          const images = await getProductImages(product.id);
+          const firstImage = images[0];
+          
+          if (!firstImage) continue; // Skip if no image
+          
+          const productCard = document.createElement('div');
+          productCard.className = 'product-card';
+          productCard.innerHTML = `
+            <div class="product-image-container">
+              <img class="product-image" src="${firstImage}" alt="${product.name}" />
+            </div>
+            <div class="product-info">
+              <div class="product-name">${product.name}</div>
+              <div class="product-price">₹${product.price}</div>
+            </div>
+          `;
+          
+          productCard.addEventListener('click', () => {
+            window.location.href = `productDetails.html?id=${product.id}`;
+          });
+          
+          latestDropGrid.appendChild(productCard);
+        }
+        
+        // Render mystery box products
+        for (const product of mysteryBoxProducts) {
+          const images = await getProductImages(product.id);
+          const firstImage = images[0];
+          
+          if (!firstImage) continue; // Skip if no image
+          
+          const productCard = document.createElement('div');
+          productCard.className = 'product-card';
+          productCard.innerHTML = `
+            <div class="product-image-container">
+              <img class="product-image" src="${firstImage}" alt="${product.name}" />
+            </div>
+            <div class="product-info">
+              <div class="product-name">${product.name}</div>
+              <div class="product-price">₹${product.price}</div>
+            </div>
+          `;
+          
+          productCard.addEventListener('click', () => {
+            window.location.href = `productDetails.html?id=${product.id}`;
+          });
+          
+          mysteryBoxGrid.appendChild(productCard);
+        }
+      } catch (error) {
+        console.error('Error loading catalog:', error);
+        document.getElementById('latestDropEmpty').style.display = 'block';
+      }
+    }
+
+    // Initial load
+    loadCatalog();
+  </script>
+
+</body>
+</html>

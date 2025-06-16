@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Details - SENEN</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body { background: #fff; color: #000;}
+    .header { background: #000; padding: 12px 0; text-align: center; }
+    .header img { height: 30px; }
+    h2 { text-align: center; margin: 20px 0; }
+
+    .form-container {
+      max-width: 800px;
+      margin: auto;
+      display: flex;
+      gap: 100px;
+      margin-bottom: 15px;
+    }
+
+    .product-display {
+      flex: 1;
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 80%;
+      max-width: 80%;
+      overflow: hidden;
+      margin: auto;
+      display: flex;
+      margin-bottom: 3%;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 400px; /* Fixed height */
+      object-fit: contain; /* Ensures image fits nicely */
+      border-radius: 8px;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 24px;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .carousel-btn.left { left: 10px; }
+    .carousel-btn.right { right: 10px; }
+
+    .product-info h3 { margin-bottom: 8px; }
+    .product-info p { margin-bottom: 12px; color: #555; }
+
+    .form-steps {
+      flex: 1;
+    }
+
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .row > div {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      height: 48px;
+    }
+
+    .quantity-control button {
+      width: 48px;
+      height: 100%;
+      background: #f0f0f0;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .quantity-control span {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .step-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .step-button {
+      background: #000;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .step-button:hover {
+      background: #222;
+    }
+
+    .step-button.outline {
+      background: transparent;
+      color: #000;
+      border: 1px solid #000;
+    }
+
+    .size-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .size-option {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px 0;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .size-option:hover {
+      background: #f0f0f0;
+    }
+
+    .size-option.selected {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+
+    .size-chart-label {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .product-details {
+      margin-top: 20px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .product-details h4 {
+      margin-bottom: 10px;
+    }
+
+    .product-details ul {
+      padding-left: 20px;
+      color: #555;
+    }
+
+    .product-details li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()"/>
+  </div>
+  <!-- Product Display Section -->
+  <div class="carousel-container">
+    <button class="carousel-btn left" onclick="prevImage()">‹</button>
+    <img src="" alt="Product Image" class="product-image" id="productImage">
+    <button class="carousel-btn right" onclick="nextImage()">›</button>
+  </div>
+  <div class="form-container">
+    <div class="product-display">
+      <div class="product-info">
+        <h3 id="productName" style="text-transform: uppercase;">Product Name</h3>
+        <p id="productPrice">₹0</p>
+        <div style="margin-top: 15px;margin-bottom: 15px;">
+            <h4 style="margin-top: 15px;margin-bottom: 10px;">DESCRIPTION</h4>
+            <p id="productDescription"></p>
+        </div>
+      </div>
+      <div class="product-details">
+        <h4>DETAILS</h4>
+        <ul id="productDetailsList"></ul>
+      </div>
+    </div>
+
+    <!-- Form Steps Section -->
+    <div class="form-steps">
+      <!-- Step 1: Product Selection -->
+      <div class="form-step active" id="step1">        
+        <div class="row">
+          <div>
+            <h4>SIZE</h4>
+            <div class="size-selector" id="sizeSelector">
+              <div class="size-option" data-size="XXS">XXS</div>
+              <div class="size-option" data-size="XS">XS</div>
+              <div class="size-option" data-size="S">S</div>
+              <div class="size-option" data-size="M">M</div>
+              <div class="size-option" data-size="L">L</div>
+              <div class="size-option" data-size="XL">XL</div>
+              <div class="size-option" data-size="XXL">XXL</div>
+              <div class="size-option" data-size="XXXL">XXXL</div>
+            </div>
+            <div class="size-chart-label" onclick="showSizeChart()">SIZE CHART</div>
+            <input type="hidden" id="size" value="">
+          </div>
+          <div>
+            <h4>QUANTITY</h4>
+            <div class="quantity-control">
+                <button onclick="changeQty(-1)" style="border-bottom-left-radius: 8px;border-top-left-radius: 8px;">-</button>
+                <span id="qtyDisplay">1</span>
+                <button onclick="changeQty(1)" style="border-bottom-right-radius: 8px;border-top-right-radius: 8px;">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-buttons">
+          <div></div>
+          <button type="button" class="step-button" onclick="nextStep()">BUY NOW</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let db;
+    function goToCatalog(){
+      window.location.href = 'catalog.html';
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    
+    // Image carousel variables
+    const imageElement = document.getElementById('productImage');
+    let currentImageIndex = 0;
+    let images = [];
+
+    // Initialize the database
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('SenenProductsDB', 4);
+        
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          resolve();
+        };
+        
+        request.onerror = (event) => {
+          console.error('Database error:', event.target.error);
+          reject(event.target.error);
+        };
+      });
+    }
+
+    // Get product details from IndexedDB
+    function getProductFromDB(id) {
+      return new Promise((resolve) => {
+        const transaction = db.transaction(['products'], 'readonly');
+        const store = transaction.objectStore('products');
+        const request = store.get(id);
+        
+        request.onsuccess = (event) => {
+          resolve(event.target.result || null);
+        };
+        
+        request.onerror = () => resolve(null);
+      });
+    }
+
+    function getProductImages(productId) {
+      return new Promise((resolve) => {
+        const transaction = db.transaction(['productImages'], 'readonly');
+        const store = transaction.objectStore('productImages');
+        const index = store.index('byProduct');
+        const request = index.getAll(IDBKeyRange.only(productId));
+        
+        request.onsuccess = (event) => {
+          const images = (event.target.result || [])
+            .sort((a, b) => a.index - b.index)
+            .map(item => {
+              // Create object URL from Blob
+              if (item.imageBlob) {
+                return URL.createObjectURL(item.imageBlob);
+              }
+              // Fallback for old data format (base64)
+              return item.imageData;
+            });
+          resolve(images);
+        };
+        
+        request.onerror = () => resolve([]);
+      });
+    }
+
+    // Carousel functions
+    function nextImage() {
+      if (images.length === 0) return;
+      currentImageIndex = (currentImageIndex + 1) % images.length;
+      imageElement.src = images[currentImageIndex];
+    }
+
+    function prevImage() {
+      if (images.length === 0) return;
+      currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+      imageElement.src = images[currentImageIndex];
+    }
+
+    // Quantity logic
+    let qty = 1;
+    function changeQty(val) {
+      qty = Math.max(1, qty + val);
+      document.getElementById('qtyDisplay').innerText = qty;
+    }
+
+    // Size selection
+    const sizeOptions = document.querySelectorAll('.size-option');
+    let selectedSize = '';
+    sizeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        sizeOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedSize = option.dataset.size;
+        document.getElementById('size').value = selectedSize;
+      });
+    });
+
+    // Show size chart
+    function showSizeChart() {
+      alert("Size chart would be displayed here");
+    }
+
+    // Next step
+    function nextStep() {
+      const size = document.getElementById('size').value;
+      if (!size) {
+        alert("Please select a size");
+        return;
+      }
+      if (qty < 1) {
+        alert("Quantity must be at least 1");
+        return;
+      }
+      
+      // Get the current product ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+      
+      // Save all necessary data to localStorage
+      localStorage.setItem('selected_size', size);
+      localStorage.setItem('selected_quantity', qty);
+      localStorage.setItem('selected_product_id', productId);
+      
+      // Redirect to delivery details page with product ID
+      window.location.href = `deliveryDetails.html?id=${productId}`;
+    }
+
+    // Load product details
+    async function loadProductDetails() {
+      if (!productId) {
+        alert('Product not found');
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      try {
+        await initDB();
+        const product = await getProductFromDB(productId);
+        images = await getProductImages(productId);
+
+        if (!product) {
+          alert('Product not found');
+          window.location.href = 'catalog.html';
+          return;
+        }
+
+        // Display first product image
+        if (images.length > 0) {
+          imageElement.src = images[0];
+        } else {
+          imageElement.src = "https://via.placeholder.com/400x500";
+        }
+
+        // Display product info
+        document.getElementById('productName').textContent = product.name;
+        document.getElementById('productPrice').textContent = `₹${product.price}`;
+        document.getElementById('productDescription').textContent = product.description || '';
+        
+        // Display product details
+        const detailsList = document.getElementById('productDetailsList');
+        if (product.details && product.details.length > 0) {
+          product.details.forEach(detail => {
+            if (detail.trim()) {
+              const li = document.createElement('li');
+              li.textContent = detail;
+              detailsList.appendChild(li);
+            }
+          });
+        } else {
+          detailsList.innerHTML = '<li>No additional details available</li>';
+        }
+      } catch (error) {
+        console.error('Error loading product details:', error);
+        alert('Failed to load product details');
+      }
+    }
+
+    // Initial load
+    loadProductDetails();
+  </script>
+</body>
+</html>

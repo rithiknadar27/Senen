@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deleted Products - Senen</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+    }
+
+    .header {
+      background: #000;
+      padding: 10px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .header img {
+      height: 30px;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    table {
+      background: white;
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f8f8f8;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      padding: 8px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1001;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .logout-icon {
+      width: 24px;
+      height: 24px;
+      filter: invert(100%);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    .modal-content p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .confirm-btn {
+      background-color: black;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #ccc;
+      color: black;
+    }
+
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
+      }
+      th, td {
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" />
+    <div class="logout-btn">
+      <img class="logout-icon" src="https://cdn-icons-png.flaticon.com/512/126/126467.png" alt="Logout" onclick="logout()">
+    </div>
+  </div>
+
+  <div class="loading" id="loadingIndicator">
+    Processing, please wait...
+  </div>
+
+  <div class="container">
+    <h1>Deleted Products</h1>
+    <table id="deletedProductsTable">
+      <thead>
+        <tr>
+          <th>Images</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Deleted On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Restore Confirmation Modal -->
+  <div id="restoreModal" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to restore this product?</p>
+      <div class="modal-buttons">
+        <button class="confirm-btn" onclick="confirmRestore()">Yes</button>
+        <button class="cancel-btn" onclick="closeModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Session configuration
+    const SESSION_DURATION = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+    let db;
+    let productsDb;
+    let restoreProductId = null;
+
+    // Check authentication status
+    function checkAuth() {
+      const sessionExpires = localStorage.getItem('sessionExpires');
+      
+      if (localStorage.getItem('adminSession') !== 'true' || 
+          !sessionExpires || 
+          Date.now() > parseInt(sessionExpires)) {
+        // Session expired or not logged in
+        endSession();
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Reset session timer on user activity
+    function resetSessionTimer() {
+      const newExpiration = Date.now() + SESSION_DURATION;
+      localStorage.setItem('sessionExpires', newExpiration.toString());
+    }
+
+    // End session (logout)
+    function endSession() {
+      localStorage.removeItem('adminSession');
+      localStorage.removeItem('sessionExpires');
+    }
+
+    function logout() {
+      endSession();
+      window.location.href = 'admin-login.html';
+    }
+
+    // Initialize the database
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('SenenProductsDB', 5); // Version bumped to 5
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          const oldVersion = event.oldVersion;
+          
+          if (oldVersion < 1) {
+            // Initial version
+            db.createObjectStore('products', { keyPath: 'id' });
+            const store = db.createObjectStore('productImages', { keyPath: ['productId', 'index'] });
+            store.createIndex('byProduct', 'productId', { unique: false });
+          }
+          
+          if (oldVersion < 2) {
+            // Migration to store Blobs instead of Data URLs
+            const transaction = event.target.transaction;
+            const oldStore = transaction.objectStore('productImages');
+            const newStore = db.createObjectStore('productImages_new', { keyPath: ['productId', 'index'] });
+            newStore.createIndex('byProduct', 'productId', { unique: false });
+            
+            oldStore.getAll().onsuccess = (e) => {
+              const allImages = e.target.result;
+              allImages.forEach(image => {
+                if (image.imageData && !image.imageBlob) {
+                  fetch(image.imageData)
+                    .then(res => res.blob())
+                    .then(blob => {
+                      newStore.add({
+                        productId: image.productId,
+                        imageBlob: blob,
+                        imageName: image.imageName,
+                        index: image.index
+                      });
+                    });
+                } else if (image.imageBlob) {
+                  newStore.add(image);
+                }
+              });
+            };
+            
+            db.deleteObjectStore('productImages');
+            newStore.name = 'productImages';
+          }
+          
+          if (oldVersion < 5) {
+            // Add deleted products store
+            db.createObjectStore('deletedProducts', { keyPath: 'id' });
+            const deletedImagesStore = db.createObjectStore('deletedProductImages', { keyPath: ['productId', 'index'] });
+            deletedImagesStore.createIndex('byProduct', 'productId', { unique: false });
+          }
+        };
+        
+        request.onsuccess = (event) => {
+          productsDb = event.target.result;
+          resolve();
+        };
+        
+        request.onerror = (event) => {
+          reject(event.target.error);
+        };
+      });
+    }
+
+    // Show loading indicator
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'flex';
+    }
+
+    // Hide loading indicator
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    // Get deleted products from IndexedDB
+    async function getDeletedProductsFromDB() {
+      return new Promise((resolve) => {
+        const transaction = productsDb.transaction(['deletedProducts'], 'readonly');
+        const store = transaction.objectStore('deletedProducts');
+        const request = store.getAll();
+        
+        request.onsuccess = (event) => {
+          resolve(event.target.result || []);
+        };
+        
+        request.onerror = () => resolve([]);
+      });
+    }
+
+    // Get deleted product image info
+    async function getDeletedProductImageInfo(productId) {
+      return new Promise((resolve) => {
+        const transaction = productsDb.transaction(['deletedProductImages'], 'readonly');
+        const store = transaction.objectStore('deletedProductImages');
+        const index = store.index('byProduct');
+        const request = index.getAll(IDBKeyRange.only(productId));
+        
+        request.onsuccess = (event) => {
+          const imageInfo = (event.target.result || [])
+            .sort((a, b) => a.index - b.index)
+            .map(item => {
+              const url = item.imageBlob ? URL.createObjectURL(item.imageBlob) : '';
+              return {
+                url: url,
+                name: item.imageName
+              };
+            });
+          resolve(imageInfo);
+        };
+        
+        request.onerror = () => resolve([]);
+      });
+    }
+
+    // Restore product from deleted to active
+    async function restoreProductFromDeleted(productId) {
+      showLoading();
+      try {
+        // Get the deleted product data
+        const product = await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['deletedProducts'], 'readonly');
+          const store = transaction.objectStore('deletedProducts');
+          const request = store.get(productId);
+          
+          request.onsuccess = (event) => resolve(event.target.result);
+          request.onerror = () => reject(new Error('Failed to get deleted product'));
+        });
+
+        if (!product) {
+          throw new Error('Product not found in deleted items');
+        }
+
+        // Get the deleted product images
+        const images = await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['deletedProductImages'], 'readonly');
+          const store = transaction.objectStore('deletedProductImages');
+          const index = store.index('byProduct');
+          const request = index.getAll(IDBKeyRange.only(productId));
+          
+          request.onsuccess = (event) => resolve(event.target.result || []);
+          request.onerror = () => reject(new Error('Failed to get deleted product images'));
+        });
+
+        // Start a transaction to move the product and images back
+        const transaction = productsDb.transaction(
+          ['products', 'productImages', 'deletedProducts', 'deletedProductImages'], 
+          'readwrite'
+        );
+
+        // Add product back to products store
+        const productsStore = transaction.objectStore('products');
+        productsStore.add(product);
+
+        // Add images back to productImages store
+        const productImagesStore = transaction.objectStore('productImages');
+        images.forEach(image => {
+          productImagesStore.add(image);
+        });
+
+        // Remove product from deletedProducts store
+        const deletedProductsStore = transaction.objectStore('deletedProducts');
+        deletedProductsStore.delete(productId);
+
+        // Remove images from deletedProductImages store
+        const deletedImagesStore = transaction.objectStore('deletedProductImages');
+        const deleteImagesRequest = deletedImagesStore.index('byProduct').openCursor(IDBKeyRange.only(productId));
+        
+        deleteImagesRequest.onsuccess = (event) => {
+          const cursor = event.target.result;
+          if (cursor) {
+            cursor.delete();
+            cursor.continue();
+          }
+        };
+
+        return new Promise((resolve, reject) => {
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = (event) => reject(event.target.error);
+        });
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // Render deleted products table
+    async function renderDeletedProducts() {
+      showLoading();
+      try {
+        const products = await getDeletedProductsFromDB();
+        const tableBody = document.querySelector("#deletedProductsTable tbody");
+        tableBody.innerHTML = '';
+        
+        for (const product of products) {
+          const imageInfo = await getDeletedProductImageInfo(product.id);
+          const imagesText = imageInfo.map(info => info.name).join(', ');
+          
+          tableBody.innerHTML += `
+            <tr>
+              <td>${imagesText}</td>
+              <td>${product.name}</td>
+              <td>₹${product.price}</td>
+              <td>${new Date(product.deletedOn || Date.now()).toLocaleString()}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="icon-btn" onclick="prepareRestore('${product.id}')" title="Restore">&#8634;</button>
+                </div>
+              </td>
+            </tr>`;
+        }
+      } catch (error) {
+        console.error('Error rendering deleted products:', error);
+        alert('Failed to load deleted products: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // Prepare to restore a product
+    async function prepareRestore(productId) {
+      showLoading();
+      try {
+        // Get the product details
+        const product = await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['deletedProducts'], 'readonly');
+          const store = transaction.objectStore('deletedProducts');
+          const request = store.get(productId);
+          
+          request.onsuccess = (event) => resolve(event.target.result);
+          request.onerror = () => reject(new Error('Failed to get product'));
+        });
+
+        if (!product) {
+          throw new Error('Product not found');
+        }
+
+        // Get the product images
+        const images = await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['deletedProductImages'], 'readonly');
+          const store = transaction.objectStore('deletedProductImages');
+          const index = store.index('byProduct');
+          const request = index.getAll(IDBKeyRange.only(productId));
+          
+          request.onsuccess = (event) => resolve(event.target.result || []);
+          request.onerror = () => reject(new Error('Failed to get product images'));
+        });
+
+        // Store the product ID for restoration
+        restoreProductId = productId;
+        
+        // Show confirmation modal
+        document.getElementById('restoreModal').style.display = 'flex';
+      } catch (error) {
+        console.error('Error preparing restore:', error);
+        alert('Failed to prepare product for restoration: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // Confirm restore
+    async function confirmRestore() {
+      if (restoreProductId) {
+        try {
+          await restoreProductFromDeleted(restoreProductId);
+          closeModal();
+          await renderDeletedProducts();
+          alert('Product restored successfully!');
+        } catch (error) {
+          console.error('Error restoring product:', error);
+          alert('Failed to restore product: ' + error.message);
+        } finally {
+          restoreProductId = null;
+        }
+      }
+    }
+
+    // Close modal
+    function closeModal() {
+      restoreProductId = null;
+      document.getElementById('restoreModal').style.display = 'none';
+    }
+
+    // Initialize the application
+    window.onload = function() {
+      if (!checkAuth()) return;
+      
+      // Set up activity listeners to reset session timer
+      document.addEventListener('mousemove', resetSessionTimer);
+      document.addEventListener('keypress', resetSessionTimer);
+      document.addEventListener('click', resetSessionTimer);
+      
+      // Initialize the database and render deleted products
+      initDB().then(() => {
+        renderDeletedProducts();
+      }).catch(error => {
+        console.error('Initialization error:', error);
+        alert('Failed to initialize application: ' + error.message);
+      });
+    };
+  </script>
+</body>
+</html>

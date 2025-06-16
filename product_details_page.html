@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Details - SENEN</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body { background: #fff; color: #000;}
+    .header { background: #000; padding: 12px 0; text-align: center; }
+    .header img { height: 30px; }
+    h2 { text-align: center; margin: 20px 0; }
+
+    .form-grid {
+      max-width: 800px;
+      margin: auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .row > div {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      height: 48px;
+    }
+
+    .quantity-control button {
+      width: 48px;
+      height: 100%;
+      background: #f0f0f0;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .quantity-control span {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    button.submit {
+      margin-top: 20px;
+      background: #000;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 14px;
+      width: 30%;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button.submit:hover {
+      background: #222;
+    }
+
+    /* New styles for size selector */
+    .size-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .size-option {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px 0;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .size-option:hover {
+      background: #f0f0f0;
+    }
+
+    .size-option.selected {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+
+    .size-chart-label {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" />
+  </div>
+
+  <h2>Order Details</h2>
+  <div class="form-grid">
+    <!-- Product Name & Price -->
+    <div class="row">
+      <div><label>Product</label><p id="productName">T-shirt</p></div>
+      <div><label>Price</label><p id="productPrice">₹0</p></div>
+    </div>
+
+    <!-- Size and Quantity -->
+    <div class="row">
+      <div>
+        <label for="size">Select Size</label>
+        <div class="size-selector">
+          <div class="size-option" data-size="XXS">XXS</div>
+          <div class="size-option" data-size="XS">XS</div>
+          <div class="size-option" data-size="S">S</div>
+          <div class="size-option" data-size="M">M</div>
+          <div class="size-option" data-size="L">L</div>
+          <div class="size-option" data-size="XL">XL</div>
+          <div class="size-option" data-size="XXL">XXL</div>
+          <div class="size-option" data-size="XXXL">XXXL</div>
+        </div>
+        <div class="size-chart-label">SIZE CHART</div>
+        <input type="hidden" id="size" value="">
+      </div>
+      <div>
+        <label>Quantity</label>
+        <div class="quantity-control">
+          <button onclick="changeQty(-1)" style="border-bottom-left-radius: 8px;border-top-left-radius: 8px;">-</button>
+          <span id="qtyDisplay">0</span>
+          <button onclick="changeQty(1)" style="border-bottom-right-radius: 8px;border-top-right-radius: 8px;">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="row">
+      <div style="flex: 1;">
+        <label for="address">Delivery Address</label>
+        <textarea id="address" placeholder="Your full address"></textarea>
+      </div>
+    </div>
+
+    <!-- State, Pincode, Phone -->
+    <div class="row">
+      <div>
+        <label for="state">State</label>
+        <input type="text" id="state" placeholder="State" />
+      </div>
+      <div>
+        <label for="pincode">Pincode</label>
+        <input type="text" id="pincode" placeholder="Pincode" />
+      </div>
+      <div>
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" placeholder="9876543210" />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="row">
+      <div style="flex: 1;">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+      </div>
+    </div>
+
+    <div class="row" style="display: flex;justify-content: end;margin-bottom: 10px;">
+      <button class="submit" onclick="proceedToPayment()">Proceed to Payment</button>
+    </div>
+  </div>
+
+  <script>
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const selectedId = localStorage.getItem('selected_product_id');
+    const product = products.find(p => p.id == selectedId) || { name: "Unknown", price: 0 };
+
+    document.getElementById('productName').innerText = product.name;
+    document.getElementById('productPrice').innerText = `₹${product.price}`;
+
+    let qty = 0;
+    function changeQty(val) {
+      qty = Math.max(0, qty + val);
+      document.getElementById('qtyDisplay').innerText = qty;
+    }
+
+    // Size selection logic
+    const sizeOptions = document.querySelectorAll('.size-option');
+    sizeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        sizeOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        document.getElementById('size').value = option.dataset.size;
+      });
+    });
+
+    function proceedToPayment() {
+      const size = document.getElementById('size').value;
+      const address = document.getElementById('address').value;
+      const state = document.getElementById('state').value;
+      const pincode = document.getElementById('pincode').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+
+      if (!size || qty === 0 || !address || !state || !pincode || !phone || !email) {
+        alert("Please fill all fields and select quantity.");
+        return;
+      }
+
+      localStorage.setItem('order_details', JSON.stringify({
+        productId: selectedId,
+        size, qty, address, state, pincode, phone, email
+      }));
+
+      window.location.href = 'confirm.html';
+    }
+  </script>
+</body>
+</html>

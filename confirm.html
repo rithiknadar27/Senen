@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm & Pay - Senen</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #fff8f0; }
+    .box { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
+    button { background: black; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Before You Pay</h2>
+    <ul>
+      <li>🚫 No Return/Exchange unless damaged</li>
+      <li>📦 Delivery in 5–7 working days</li>
+      <li>💳 Prepaid Orders Only — No COD</li>
+    </ul>
+    <button onclick="payNow()">Proceed to Pay</button>
+  </div>
+
+  <script>
+    function payNow() {
+      // const details = JSON.parse(localStorage.getItem('customerDetails'));
+      // const selected = JSON.parse(localStorage.getItem('products'))[localStorage.getItem('selectedProduct')];
+      // const options = {
+      //   key: 'rzp_test_123456789', // Replace with your real Razorpay key
+      //   amount: parseInt(selected.price) * 100,
+      //   currency: 'INR',
+      //   name: 'Senen Clothing',
+      //   description: selected.name,
+      //   handler: function (response) {
+      //     alert('Payment Successful!');
+      //     window.location.href = 'thankyou.html';
+      //   },
+      //   prefill: {
+      //     name: details.name,
+      //     email: details.email,
+      //     contact: details.mobile
+      //   },
+      //   theme: {
+      //     color: '#000'
+      //   }
+      // };
+      // const rzp = new Razorpay(options);
+      // rzp.open();
+      window.location.href = 'payment_page.html';
+    }
+  </script>
+</body>
+</html>
