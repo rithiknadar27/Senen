@@ -205,7 +205,7 @@
 </head>
 <body>
   <div class="header">
-    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()"/>
+    <img src="D:\Rithik\Senenindex\New\kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToindex()"/>
   </div>
   <!-- Product Display Section -->
   <div class="carousel-container">
@@ -269,8 +269,8 @@
 
   <script>
     let db;
-    function goToCatalog(){
-      window.location.href = 'catalog.html';
+    function goToindex(){
+      window.location.href = 'index.html';
     }
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
@@ -403,7 +403,7 @@
     async function loadProductDetails() {
       if (!productId) {
         alert('Product not found');
-        window.location.href = 'catalog.html';
+        window.location.href = 'index.html';
         return;
       }
 
@@ -414,7 +414,7 @@
 
         if (!product) {
           alert('Product not found');
-          window.location.href = 'catalog.html';
+          window.location.href = 'index.html';
           return;
         }
 
