@@ -632,6 +632,10 @@
       }
     }
 
+    .icon-btn.delete-permanent {
+      background-color: #dc3545;
+    }
+
     @media (max-width: 768px) {
       .form-row {
         flex-direction: column;
@@ -1653,17 +1657,18 @@
           const imagesText = imageInfo.map(info => info.name).join(', ');
 
           tableBody.innerHTML += `
-            <tr>
-              <td class="image-names">${imagesText}</td>
-              <td>${product.name}</td>
-              <td>₹${product.price}</td>
-              <td>${new Date(product.deletedOn).toLocaleString()}</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="icon-btn" onclick="showRestoreForm('${product.id}')" title="Restore">&#8634;</button>
-                </div>
-              </td>
-            </tr>`;
+        <tr>
+          <td class="image-names">${imagesText}</td>
+          <td>${product.name}</td>
+          <td>₹${product.price}</td>
+          <td>${new Date(product.deletedOn).toLocaleString()}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="icon-btn" onclick="showRestoreForm('${product.id}')" title="Restore">&#8634;</button>
+              <button class="icon-btn" onclick="showPermanentDeleteModal('${product.id}')" title="Permanently Delete">&#10006;</button>
+            </div>
+          </td>
+        </tr>`;
         }
       } finally {
         hideLoading();
@@ -1916,6 +1921,83 @@
         alert('Failed to initialize application: ' + error.message);
       });
     };
+
+    function showPermanentDeleteModal(productId) {
+      // Remove any existing modals first
+      const existingModals = document.querySelectorAll('.modal');
+      existingModals.forEach(modal => modal.remove());
+
+      // Create a fresh modal
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.id = 'permanentDeleteModal';
+      modal.innerHTML = `
+    <div class="modal-content">
+      <p>Are you sure you want to permanently delete this product? This action cannot be undone.</p>
+      <div class="modal-buttons">
+        <button class="confirm-btn">Yes, Delete Permanently</button>
+        <button class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  `;
+
+      // Add event listeners to the new buttons
+      modal.querySelector('.confirm-btn').addEventListener('click', () => confirmPermanentDelete(productId));
+      modal.querySelector('.cancel-btn').addEventListener('click', () => modal.remove());
+
+      document.body.appendChild(modal);
+      modal.style.display = 'flex';
+    }
+
+    async function confirmPermanentDelete(productId) {
+      showLoading();
+      try {
+        // First delete the product images
+        await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['productImages'], 'readwrite');
+          const store = transaction.objectStore('productImages');
+          const index = store.index('byProduct');
+          const request = index.openCursor(IDBKeyRange.only(productId));
+
+          request.onsuccess = (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+              if (cursor.value.imageUrl) {
+                URL.revokeObjectURL(cursor.value.imageUrl);
+              }
+              cursor.delete();
+              cursor.continue();
+            } else {
+              resolve();
+            }
+          };
+          request.onerror = () => reject(request.error);
+        });
+
+        // Then delete the product itself
+        await new Promise((resolve, reject) => {
+          const transaction = productsDb.transaction(['products'], 'readwrite');
+          const store = transaction.objectStore('products');
+          const request = store.delete(productId);
+
+          request.onsuccess = () => resolve();
+          request.onerror = (event) => reject(event.target.error);
+        });
+
+        // Remove the modal
+        const modal = document.getElementById('permanentDeleteModal');
+        if (modal) modal.remove();
+
+        // Refresh the deleted products list
+        await renderDeletedProducts();
+
+      } catch (error) {
+        console.error('Error permanently deleting product:', error);
+        alert('Failed to permanently delete product: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
   </script>
 </body>
 
