@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Orders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+    }
+
+    .header {
+      background: #000;
+      padding: 10px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .header img {
+      height: 30px;
+    }
+
+    .container {
+      padding: 0 15px;
+    }
+
+    /* TAB STYLING */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #f4f4f4;
+      border: 1px solid #ccc;
+      border-bottom: none;
+      margin-right: 5px;
+      border-radius: 5px 5px 0 0;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: white;
+      border-bottom: 1px solid white;
+      margin-bottom: -1px;
+      font-weight: bold;
+      color: #000;
+      background-color: #fff;
+    }
+
+    .tab:hover:not(.active) {
+      background-color: #e0e0e0;
+    }
+
+    /* ORDERS TAB STYLING */
+    .order-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 0 10px;
+    }
+
+    .order-filters select,
+    .order-filters button {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .order-filters button {
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-id {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .order-date {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .order-status {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #FFF3CD;
+      color: #856404;
+    }
+
+    .status-created {
+      background: #D1ECF1;
+      color: #0C5460;
+    }
+
+    .status-shipped {
+      background: #D4EDDA;
+      color: #155724;
+    }
+
+    .status-delivered {
+      background: #D4EDDA;
+      color: #155724;
+    }
+
+    .order-details {
+      margin: 10px 0;
+    }
+
+    .order-details p {
+      margin: 5px 0;
+      font-size: 0.9em;
+    }
+
+    .order-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .status-select {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .view-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-btn img {
+      transition: transform 0.2s;
+    }
+
+    .view-btn:hover img {
+      transform: scale(1.1);
+    }
+
+    /* LOADING INDICATOR */
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1001;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .logout-icon {
+      width: 24px;
+      height: 24px;
+      filter: invert(100%);
+    }
+
+    .back-button {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .back-icon {
+        width: 24px;
+        height: 24px;
+        filter: invert(100%);
+    }
+
+    @media (max-width: 768px) {
+      .order-filters {
+        flex-direction: column;
+      }
+
+      .orders-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+    <div class="header">
+        <button class="back-button" onclick="window.location.href='admin-dashboard.html'">
+            <img class="back-icon" src="https://cdn-icons-png.flaticon.com/512/3114/3114883.png" alt="Back">
+        </button>
+        <img src="kosans-demo.regular.webp" alt="SENEN Logo" />
+        <div class="logout-btn">
+            <img class="logout-icon" src="https://cdn-icons-png.flaticon.com/512/126/126467.png" alt="Logout"
+                onclick="logout()">
+        </div>
+    </div>
+
+  <div class="loading" id="loadingIndicator">
+    Processing, please wait...
+  </div>
+
+  <div class="container">
+    <!-- <div class="tabs">
+      <div class="tab" onclick="window.location.href='products.html'">Products</div>
+      <div class="tab active" onclick="window.location.href='orders.html'">Orders</div>
+      <div class="tab" onclick="window.location.href='deleted.html'">Deleted Products</div>
+    </div> -->
+
+    <!-- ORDERS TAB -->
+    <div id="orders-tab">
+      <h2>Order List</h2>
+      <div class="order-filters">
+        <select id="statusFilter">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="paid">Paid</option>
+          <option value="created">Created</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+        </select>
+
+        <select id="dateFilter">
+          <option value="all">All Dates</option>
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+
+        <button onclick="applyFilters()">Apply Filters</button>
+      </div>
+      <div class="orders-grid" id="ordersGrid">
+        <!-- Orders will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Session configuration
+    const SESSION_DURATION = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+
+    // Check authentication status
+    function checkAuth() {
+      const sessionExpires = localStorage.getItem('sessionExpires');
+
+      if (localStorage.getItem('adminSession') !== 'true' ||
+        !sessionExpires ||
+        Date.now() > parseInt(sessionExpires)) {
+        // Session expired or not logged in
+        endSession();
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Reset session timer on user activity
+    function resetSessionTimer() {
+      const newExpiration = Date.now() + SESSION_DURATION;
+      localStorage.setItem('sessionExpires', newExpiration.toString());
+    }
+
+    // End session (logout)
+    function endSession() {
+      localStorage.removeItem('adminSession');
+      localStorage.removeItem('sessionExpires');
+    }
+
+    // Add logout button functionality
+    function setupLogoutButton() {
+      const logoutBtn = document.createElement('div');
+      logoutBtn.className = 'logout-btn';
+      logoutBtn.innerHTML = `
+        <img class="logout-icon" src="https://cdn-icons-png.flaticon.com/512/126/126467.png" alt="Logout" onclick="logout()">
+      `;
+      document.querySelector('.header').appendChild(logoutBtn);
+    }
+
+    function logout() {
+      endSession();
+      window.location.href = 'admin-login.html';
+    }
+
+    let db;
+    let productsDb;
+
+    // Initialize the database
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        // First open products DB (needed for product info)
+        const productsRequest = indexedDB.open('SenenProductsDB', 6);
+
+        productsRequest.onsuccess = (event) => {
+          productsDb = event.target.result;
+
+          // Then open orders DB
+          const ordersRequest = indexedDB.open('SenenOrdersDB', 6);
+
+          ordersRequest.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('orders')) {
+              const store = db.createObjectStore('orders', { keyPath: 'id' });
+              store.createIndex('byDate', 'date', { unique: false });
+              store.createIndex('byStatus', 'status', { unique: false });
+            }
+          };
+
+          ordersRequest.onsuccess = (e) => {
+            db = e.target.result;
+            resolve();
+          };
+
+          ordersRequest.onerror = (e) => {
+            reject(e.target.error);
+          };
+        };
+
+        productsRequest.onerror = (event) => {
+          reject(event.target.error);
+        };
+      });
+    }
+
+    // Show loading indicator
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'flex';
+    }
+
+    // Hide loading indicator
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    // ORDERS FUNCTIONS
+    async function getOrdersFromDB() {
+      return new Promise((resolve, reject) => {
+        if (!db) {
+          reject(new Error('Database not initialized'));
+          return;
+        }
+
+        const transaction = db.transaction(['orders'], 'readonly');
+        const store = transaction.objectStore('orders');
+        const request = store.getAll();
+
+        request.onsuccess = (event) => {
+          resolve(event.target.result || []);
+        };
+
+        request.onerror = (event) => {
+          reject(event.target.error);
+        };
+      });
+    }
+
+    async function getProductDetails(productId) {
+      return new Promise((resolve) => {
+        const transaction = productsDb.transaction(['products'], 'readonly');
+        const store = transaction.objectStore('products');
+        const request = store.get(productId);
+
+        request.onsuccess = (event) => {
+          resolve(event.target.result || null);
+        };
+
+        request.onerror = () => resolve(null);
+      });
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      return new Promise((resolve, reject) => {
+        if (!db) {
+          reject(new Error('Database not initialized'));
+          return;
+        }
+
+        const transaction = db.transaction(['orders'], 'readwrite');
+        const store = transaction.objectStore('orders');
+
+        // Convert orderId to number for consistency
+        const numericOrderId = typeof orderId === 'string' ? Number(orderId) : orderId;
+
+        const getRequest = store.get(numericOrderId);
+
+        getRequest.onsuccess = (event) => {
+          const order = event.target.result;
+          if (!order) {
+            reject(new Error(`Order with ID ${numericOrderId} not found`));
+            return;
+          }
+
+          order.status = newStatus;
+          order.lastUpdated = new Date().toISOString();
+
+          const putRequest = store.put(order);
+
+          putRequest.onsuccess = () => resolve(order);
+          putRequest.onerror = (event) => reject(event.target.error);
+        };
+
+        getRequest.onerror = (event) => reject(event.target.error);
+      });
+    }
+
+    async function applyFilters() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const dateFilter = document.getElementById('dateFilter').value;
+
+      showLoading();
+      try {
+        const allOrders = await getOrdersFromDB();
+        let filteredOrders = [...allOrders];
+
+        // Apply status filter
+        if (statusFilter !== 'all') {
+          filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+        }
+
+        // Apply date filter
+        const now = new Date();
+        if (dateFilter !== 'all') {
+          filteredOrders = filteredOrders.filter(order => {
+            const orderDate = new Date(order.date);
+
+            if (dateFilter === 'today') {
+              return orderDate.toDateString() === now.toDateString();
+            } else if (dateFilter === 'week') {
+              const startOfWeek = new Date(now);
+              startOfWeek.setDate(now.getDate() - now.getDay());
+              return orderDate >= startOfWeek;
+            } else if (dateFilter === 'month') {
+              return orderDate.getMonth() === now.getMonth() &&
+                orderDate.getFullYear() === now.getFullYear();
+            }
+            return true;
+          });
+        }
+
+        renderFilteredOrders(filteredOrders);
+      } catch (error) {
+        console.error('Error applying filters:', error);
+        alert('Failed to apply filters: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function renderFilteredOrders(orders) {
+      const ordersGrid = document.getElementById('ordersGrid');
+      ordersGrid.innerHTML = '';
+
+      if (orders.length === 0) {
+        ordersGrid.innerHTML = '<p>No orders match the selected filters</p>';
+        return;
+      }
+
+      // Sort orders by date (newest first)
+      orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      for (const order of orders) {
+        const orderCard = document.createElement('div');
+        orderCard.className = 'order-card';
+
+        const statusClass = `status-${order.status || 'pending'}`;
+        const amount = (order.price || 0) * (order.quantity || 1);
+
+        orderCard.innerHTML = `
+          <div class="order-header">
+            <div>
+              <div class="order-id">Order #${order.id}</div>
+              <div class="order-date">${new Date(order.date).toLocaleString()}</div>
+            </div>
+            <div class="order-status ${statusClass}">${order.status || 'pending'}</div>
+          </div>
+          <div class="order-details">
+            <p><strong>Product:</strong> ${order.productId}</p>
+            <p><strong>Customer:</strong> ${order.fullName}</p>
+            <p><strong>Amount:</strong> ₹${amount.toFixed(2)}</p>
+          </div>
+          <div class="order-actions">
+            <select class="status-select" data-order-id="${order.id}">
+              <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>Paid</option>
+              <option value="created" ${order.status === 'created' ? 'selected' : ''}>Order Created</option>
+              <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+            </select>
+            <button class="view-btn" data-order-id="${order.id}" title="View Details">
+              <img src="https://cdn-icons-png.flaticon.com/512/11502/11502607.png" alt="View" style="width:20px;height:20px;">
+            </button>
+          </div>
+        `;
+
+        ordersGrid.appendChild(orderCard);
+      }
+    }
+
+    async function renderOrders() {
+      showLoading();
+      try {
+        const orders = await getOrdersFromDB();
+        await renderFilteredOrders(orders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('ordersGrid').innerHTML = `<p>Error loading orders: ${error.message}</p>`;
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function changeOrderStatus(orderId, newStatus) {
+      showLoading();
+      try {
+        // Ensure orderId is treated consistently (as number)
+        const numericOrderId = Number(orderId);
+        await updateOrderStatus(numericOrderId, newStatus);
+        await renderOrders(); // Refresh the orders list
+      } catch (error) {
+        console.error('Error updating order status:', error);
+        alert('Failed to update order status: ' + error.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // Initialize the application
+    window.onload = function () {
+      if (!checkAuth()) return;
+
+      // Set up activity listeners to reset session timer
+      document.addEventListener('mousemove', resetSessionTimer);
+      document.addEventListener('keypress', resetSessionTimer);
+      document.addEventListener('click', resetSessionTimer);
+
+      // Add logout button
+      setupLogoutButton();
+
+      // Initialize the database and render orders
+      initDB().then(() => {
+        renderOrders();
+      }).catch(error => {
+        console.error('Initialization error:', error);
+        alert('Failed to initialize application: ' + error.message);
+      });
+    };
+
+    // Event delegation for dynamic elements
+    document.addEventListener('change', async function (event) {
+      // Handle status change specifically for select elements
+      if (event.target.classList.contains('status-select')) {
+        const orderId = event.target.getAttribute('data-order-id');
+        const newStatus = event.target.value;
+        await changeOrderStatus(orderId, newStatus);
+      }
+    });
+
+    document.addEventListener('click', async function (event) {
+      // Handle view details click on the eye icon or its parent
+      if (event.target.classList.contains('view-btn') ||
+        (event.target.parentElement && event.target.parentElement.classList.contains('view-btn'))) {
+        const orderId = event.target.getAttribute('data-order-id') ||
+          event.target.parentElement.getAttribute('data-order-id');
+        // Redirect to order-details.html with the order ID
+        window.location.href = `order-details.html?id=${orderId}`;
+      }
+    });
+  </script>
+</body>
+
+</html>
