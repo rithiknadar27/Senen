@@ -140,7 +140,7 @@
 </head>
 <body>
   <div class="header">
-    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()">
+    <img src="kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()">
   </div>
 
   <div class="container">
@@ -383,7 +383,7 @@
 
     function initDB() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SenenProductsDB', 4);
+        const request = indexedDB.open('SenenProductsDB', 6);
         
         request.onsuccess = (event) => {
           db = event.target.result;
@@ -555,7 +555,7 @@
     
     function saveOrderToIndexedDB(order) {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SenenOrdersDB', 4);
+        const request = indexedDB.open('SenenOrdersDB', 6);
         
         request.onupgradeneeded = (event) => {
           const db = event.target.result;

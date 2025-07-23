@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SENEN Catalog</title>
   <style>
     * {
@@ -60,7 +61,7 @@
       overflow: hidden;
       transition: transform 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .product-card:hover {
@@ -118,7 +119,7 @@
       display: flex;
       align-items: center;
       font-size: 17px;
-      margin-left:10%;
+      margin-left: 10%;
     }
 
     .countdown-segment {
@@ -134,7 +135,7 @@
     }
 
     .countdown-separator {
-      color: rgba(255, 255, 255, 0.7); 
+      color: rgba(255, 255, 255, 0.7);
       font-size: 1em;
       margin: 0 1px;
       font-weight: normal;
@@ -145,12 +146,29 @@
       color: #000;
     }
 
+    .sold-out-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #000;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .product-image-container {
+      position: relative;
+    }
+
     @media (max-width: 768px) {
       .catalog-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
       }
-      
+
       .product-image-container {
         height: 200px;
       }
@@ -162,10 +180,11 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="header">
-    <img src="kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()"/>
+    <img src="kosans-demo.regular.webp" alt="SENEN Logo" onclick="goToCatalog()" />
   </div>
 
   <div class="section" id="latestDropSection">
@@ -196,33 +215,33 @@
   <script>
     let db; // IndexedDB instance
 
-    function goToCatalog(){
+    function goToCatalog() {
       window.location.href = 'index.html';
     }
 
     // Initialize the database
     function initDB() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SenenProductsDB', 4);
-        
+        const request = indexedDB.open('SenenProductsDB', 6);
+
         request.onupgradeneeded = (event) => {
           const db = event.target.result;
-          
+
           if (!db.objectStoreNames.contains('products')) {
             db.createObjectStore('products', { keyPath: 'id' });
           }
-          
+
           if (!db.objectStoreNames.contains('productImages')) {
             const store = db.createObjectStore('productImages', { keyPath: ['productId', 'index'] });
             store.createIndex('byProduct', 'productId', { unique: false });
           }
         };
-        
+
         request.onsuccess = (event) => {
           db = event.target.result;
           resolve();
         };
-        
+
         request.onerror = (event) => {
           console.error('Database error:', event.target.error);
           reject(event.target.error);
@@ -235,15 +254,86 @@
       return new Promise((resolve) => {
         const transaction = db.transaction(['products'], 'readonly');
         const store = transaction.objectStore('products');
+
+        // Get all products and filter active ones in memory
         const request = store.getAll();
-        
+
         request.onsuccess = (event) => {
-          resolve(event.target.result || []);
+          const allProducts = event.target.result || [];
+          const activeProducts = allProducts.filter(product => product.isActive !== false);
+          resolve(activeProducts);
         };
-        
+
         request.onerror = () => resolve([]);
       });
     }
+
+    function getOrderCountForProduct(productId) {
+      return new Promise((resolve, reject) => {
+        // First, open the orders database
+        const ordersRequest = indexedDB.open('SenenOrdersDB', 6);
+
+        ordersRequest.onsuccess = (event) => {
+          const db = event.target.result;
+
+          // Check if the database has the orders store
+          if (!db.objectStoreNames.contains('orders')) {
+            resolve(0);
+            return;
+          }
+
+          const transaction = db.transaction(['orders'], 'readonly');
+          const store = transaction.objectStore('orders');
+
+          // Create an index on productId if it doesn't exist (should be done in onupgradeneeded)
+          // For now, we'll count all orders where productId matches
+          // This is less efficient than using an index but works without schema changes
+          const request = store.getAll();
+
+          request.onsuccess = (event) => {
+            const allOrders = event.target.result || [];
+            const count = allOrders.filter(order => order.productId === productId).length;
+            resolve(count);
+          };
+
+          request.onerror = () => resolve(0);
+        };
+
+        ordersRequest.onerror = () => resolve(0);
+      });
+    }
+
+    async function createProductCard(product, firstImage) {
+      const orderCount = await getOrderCountForProduct(product.id);
+      const isSoldOut = product.maxCount && orderCount >= product.maxCount;
+
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+
+      productCard.innerHTML = `
+    <div class="product-image-container">
+      <img class="product-image" src="${firstImage}" alt="${product.name}" />
+      ${isSoldOut ? '<div class="sold-out-badge">SOLD OUT</div>' : ''}
+    </div>
+    <div class="product-info">
+      <div class="product-name">${product.name}</div>
+      <div class="product-price">₹${product.price}</div>
+    </div>
+  `;
+
+      // Only add click handler if not sold out
+      if (!isSoldOut) {
+        productCard.addEventListener('click', () => {
+          window.location.href = `productDetails.html?id=${product.id}`;
+        });
+      } else {
+        productCard.style.cursor = 'default';
+        productCard.style.opacity = '0.7';
+      }
+
+      return productCard;
+    }
+
 
     // Get product images from IndexedDB
     function getProductImages(productId) {
@@ -252,7 +342,7 @@
         const store = transaction.objectStore('productImages');
         const index = store.index('byProduct');
         const request = index.getAll(IDBKeyRange.only(productId));
-        
+
         request.onsuccess = (event) => {
           const images = (event.target.result || [])
             .sort((a, b) => a.index - b.index)
@@ -266,7 +356,7 @@
             });
           resolve(images);
         };
-        
+
         request.onerror = () => resolve([]);
       });
     }
@@ -276,7 +366,7 @@
       const now = new Date();
       const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 5 = Friday, 6 = Saturday
       const hours = now.getHours();
-      
+
       // If it's Friday (day 5) or Saturday before the same hour as now on Friday
       // (meaning we're within 24 hours of Friday 00:00)
       return day === 5 || (day === 6 && hours < now.getHours());
@@ -284,35 +374,35 @@
 
     // Update countdown timer
     function updateCountdown() {
-    const now = new Date();
-    const nextFriday = new Date();
-    
-    // Calculate days until next Friday
-    let daysUntilFriday = (5 - now.getDay() + 7) % 7;
-    
-    // If it's Saturday or we're past Friday 23:59:59, show countdown to next Friday
-    if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 24)) {
-      daysUntilFriday = (5 - now.getDay() + 7) % 7;
-    }
-    
-    // Set to next Friday at 00:00:00
-    nextFriday.setDate(now.getDate() + daysUntilFriday);
-    nextFriday.setHours(0, 0, 0, 0);
-    
-    // Calculate end of Friday (next Friday 23:59:59)
-    const endOfFriday = new Date(nextFriday);
-    endOfFriday.setHours(23, 59, 59, 999);
-    
-    // If we're within Friday (00:00:00 to 23:59:59)
-    if (now >= nextFriday && now <= endOfFriday) {
-      // Calculate time remaining until Friday ends
-      const diff = endOfFriday - now;
-      
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      const timerHTML = `
+      const now = new Date();
+      const nextFriday = new Date();
+
+      // Calculate days until next Friday
+      let daysUntilFriday = (5 - now.getDay() + 7) % 7;
+
+      // If it's Saturday or we're past Friday 23:59:59, show countdown to next Friday
+      if (now.getDay() === 6 || (now.getDay() === 5 && now.getHours() >= 24)) {
+        daysUntilFriday = (5 - now.getDay() + 7) % 7;
+      }
+
+      // Set to next Friday at 00:00:00
+      nextFriday.setDate(now.getDate() + daysUntilFriday);
+      nextFriday.setHours(0, 0, 0, 0);
+
+      // Calculate end of Friday (next Friday 23:59:59)
+      const endOfFriday = new Date(nextFriday);
+      endOfFriday.setHours(23, 59, 59, 999);
+
+      // If we're within Friday (00:00:00 to 23:59:59)
+      if (now >= nextFriday && now <= endOfFriday) {
+        // Calculate time remaining until Friday ends
+        const diff = endOfFriday - now;
+
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const timerHTML = `
         <span class="countdown-segment">
           <span class="countdown-value">${hours.toString().padStart(2, '0')}</span>h
         </span>
@@ -325,18 +415,18 @@
           <span class="countdown-value">${seconds.toString().padStart(2, '0')}</span>s
         </span>
       `;
-      
-      document.getElementById('countdownTimer').innerHTML = timerHTML;
-    } else {
-      // Calculate time until next Friday begins
-      const diff = nextFriday - now;
-      
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      const timerHTML = `
+
+        document.getElementById('countdownTimer').innerHTML = timerHTML;
+      } else {
+        // Calculate time until next Friday begins
+        const diff = nextFriday - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const timerHTML = `
         <span class="countdown-segment">
           <span class="countdown-value">${days.toString().padStart(2, '0')}</span>d
         </span>
@@ -351,10 +441,10 @@
         </span>
         <span class="countdown-label">until Friday</span>
       `;
-      
-      document.getElementById('countdownTimer').innerHTML = timerHTML;
+
+        document.getElementById('countdownTimer').innerHTML = timerHTML;
+      }
     }
-  }
 
     // Load and render the catalog
     async function loadCatalog() {
@@ -370,26 +460,26 @@
         // Clear existing content
         latestDropGrid.innerHTML = '';
         mysteryBoxGrid.innerHTML = '';
-        
+
         if (products.length === 0) {
           latestDropEmpty.style.display = 'block';
           return;
         }
-        
+
         // Check if we should show Mystery Box section
         const showMysteryBox = isFridayAndWithin24Hours();
-        mysteryBoxSection.style.display = showMysteryBox? 'block' : 'none';
-        
+        mysteryBoxSection.style.display = showMysteryBox ? 'block' : 'none';
+
         // Start countdown timer if Mystery Box section is shown
         if (showMysteryBox) {
           setInterval(updateCountdown, 1000);
           updateCountdown();
         }
-        
+
         // Split products into regular and mystery box
         const regularProducts = [];
         const mysteryBoxProducts = [];
-        
+
         products.forEach(product => {
           if (product.name.toLowerCase().includes('mystery box')) {
             mysteryBoxProducts.push(product);
@@ -397,66 +487,36 @@
             regularProducts.push(product);
           }
         });
-        
+
         // Handle empty states
         latestDropEmpty.style.display = regularProducts.length === 0 ? 'block' : 'none';
         mysteryBoxEmpty.style.display = mysteryBoxProducts.length === 0 ? 'block' : 'none';
-        
+
         // Sort products alphabetically
         regularProducts.sort((a, b) => a.name.localeCompare(b.name));
         mysteryBoxProducts.sort((a, b) => a.name.localeCompare(b.name));
-        
+
         // Render regular products
         for (const product of regularProducts) {
           const images = await getProductImages(product.id);
           const firstImage = images[0];
-          
-          if (!firstImage) continue; // Skip if no image
-          
-          const productCard = document.createElement('div');
-          productCard.className = 'product-card';
-          productCard.innerHTML = `
-            <div class="product-image-container">
-              <img class="product-image" src="${firstImage}" alt="${product.name}" />
-            </div>
-            <div class="product-info">
-              <div class="product-name">${product.name}</div>
-              <div class="product-price">₹${product.price}</div>
-            </div>
-          `;
-          
-          productCard.addEventListener('click', () => {
-            window.location.href = `productDetails.html?id=${product.id}`;
-          });
-          
+
+          if (!firstImage) continue;
+
+          const productCard = await createProductCard(product, firstImage);
           latestDropGrid.appendChild(productCard);
         }
-        
         // Render mystery box products
         for (const product of mysteryBoxProducts) {
           const images = await getProductImages(product.id);
           const firstImage = images[0];
-          
-          if (!firstImage) continue; // Skip if no image
-          
-          const productCard = document.createElement('div');
-          productCard.className = 'product-card';
-          productCard.innerHTML = `
-            <div class="product-image-container">
-              <img class="product-image" src="${firstImage}" alt="${product.name}" />
-            </div>
-            <div class="product-info">
-              <div class="product-name">${product.name}</div>
-              <div class="product-price">₹${product.price}</div>
-            </div>
-          `;
-          
-          productCard.addEventListener('click', () => {
-            window.location.href = `productDetails.html?id=${product.id}`;
-          });
-          
+
+          if (!firstImage) continue;
+
+          const productCard = await createProductCard(product, firstImage);
           mysteryBoxGrid.appendChild(productCard);
         }
+
       } catch (error) {
         console.error('Error loading catalog:', error);
         document.getElementById('latestDropEmpty').style.display = 'block';
@@ -468,4 +528,5 @@
   </script>
 
 </body>
+
 </html>

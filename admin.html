@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard - Senen</title>
@@ -9,7 +10,7 @@
       background: #f4f4f4;
       margin: 0;
     }
-    
+
     .header {
       background: #000;
       padding: 10px 0;
@@ -80,7 +81,10 @@
       width: 100%;
     }
 
-    input, button, textarea, select {
+    input,
+    button,
+    textarea,
+    select {
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
@@ -91,7 +95,8 @@
     input[type="number"],
     input[type="file"],
     input[type="password"],
-    textarea, select {
+    textarea,
+    select {
       flex: 1;
       min-width: 200px;
     }
@@ -128,7 +133,8 @@
       overflow: hidden;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       border: 1px solid #ccc;
       text-align: center;
@@ -184,7 +190,7 @@
       position: absolute;
       top: 5px;
       right: 5px;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       color: white;
       border: none;
       border-radius: 50%;
@@ -202,7 +208,7 @@
       position: absolute;
       bottom: 5px;
       left: 5px;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       color: white;
       border: none;
       border-radius: 50%;
@@ -227,7 +233,8 @@
       padding: 0 10px;
     }
 
-    .order-filters select, .order-filters button {
+    .order-filters select,
+    .order-filters button {
       padding: 8px 12px;
       border-radius: 5px;
       border: 1px solid #ccc;
@@ -251,7 +258,7 @@
       background: white;
       border-radius: 10px;
       padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .order-header {
@@ -448,7 +455,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       z-index: 1001;
       justify-content: center;
       align-items: center;
@@ -477,7 +484,7 @@
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     #restoreForm h3 {
@@ -498,7 +505,7 @@
     }
 
     #restoreForm .submit-btn-container .confirm-btn {
-      background:black;
+      background: black;
       color: white;
       border: none;
     }
@@ -511,148 +518,157 @@
 
 
     /* Restore Form Styles */
-  .restore-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .restore-form h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1.5rem;
-  }
-  
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group.full-width {
-    grid-column: span 2;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: #555;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    box-sizing: border-box;
-  }
-  
-  textarea.form-control {
-    min-height: 100px;
-    resize: vertical;
-  }
-  
-  .image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    padding: 10px;
-    background: #f5f5f5;
-    border-radius: 4px;
-    border: 1px dashed #ddd;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    border: none;
-    transition: background 0.2s;
-  }
-  
-  .btn-primary {
-    background: #000;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background: #333;
-  }
-  
-  .btn-secondary {
-    background: #6c757d;
-    color: white;
-  }
-  
-  .btn-secondary:hover {
-    background: #5a6268;
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
+    .restore-form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .restore-form h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 1.5rem;
+    }
+
     .form-grid {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
-    
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
     .form-group.full-width {
-      grid-column: span 1;
+      grid-column: span 2;
     }
-    
-    .form-actions {
-      flex-direction: column;
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
     }
-    
-    .btn {
+
+    .form-control {
       width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      box-sizing: border-box;
     }
-  }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      border: 1px dashed #ddd;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
 
     @media (max-width: 768px) {
       .form-row {
         flex-direction: column;
       }
+
       .submit-btn-container {
         justify-content: center;
       }
-      table, th, td {
+
+      table,
+      th,
+      td {
         font-size: 14px;
       }
+
       .orders-grid {
         grid-template-columns: 1fr;
       }
+
       .order-info {
         grid-template-columns: 1fr;
       }
+
       .product-section {
         flex-direction: column;
       }
+
       .order-filters {
         flex-direction: column;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="header">
-    <img src="D:\Rithik\SenenCatalog\New\kosans-demo.regular.webp" alt="SENEN Logo" />
+    <img src="kosans-demo.regular.webp" alt="SENEN Logo" />
   </div>
 
   <div class="loading" id="loadingIndicator">
@@ -681,6 +697,7 @@
         <div class="form-row">
           <textarea id="description" placeholder="Product Description" required></textarea>
           <textarea id="details" placeholder="Product Details (one per line)" required></textarea>
+          <input type="number" id="maxCount" name="maxCount" placeholder="Max Count" min="1" required>
         </div>
         <div class="submit-btn-container">
           <button type="submit" id="submitBtn">Add Product</button>
@@ -694,6 +711,7 @@
             <th>Images</th>
             <th>Name</th>
             <th>Price</th>
+            <th>Max Count</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -713,14 +731,14 @@
           <option value="shipped">Shipped</option>
           <option value="delivered">Delivered</option>
         </select>
-        
+
         <select id="dateFilter">
           <option value="all">All Dates</option>
           <option value="today">Today</option>
           <option value="week">This Week</option>
           <option value="month">This Month</option>
         </select>
-        
+
         <button onclick="applyFilters()">Apply Filters</button>
       </div>
       <div class="orders-grid" id="ordersGrid">
@@ -729,44 +747,45 @@
     </div>
   </div>
 
-   <!-- NEW DELETED PRODUCTS TAB -->
+  <!-- NEW DELETED PRODUCTS TAB -->
   <div id="deleted-tab" class="tab-content">
     <h2>Deleted Products</h2>
     <form id="restoreForm" class="restore-form" style="display: none;" onsubmit="confirmRestore(event)">
       <h3>Restore Product</h3>
-      
+
       <div class="form-grid">
         <!-- Product Name -->
         <div class="form-group">
           <label for="restore-name">Product Name</label>
           <input type="text" id="restore-name" class="form-control" placeholder="Product Name" readonly />
         </div>
-        
+
         <!-- Product Price -->
         <div class="form-group">
           <label for="restore-price">Price (INR)</label>
           <input type="number" id="restore-price" class="form-control" placeholder="Price" readonly />
         </div>
-        
+
         <!-- Image Preview -->
         <div class="form-group full-width">
           <label>Product Images</label>
           <div id="restore-imagePreview" class="image-grid"></div>
         </div>
-        
+
         <!-- Description -->
         <div class="form-group full-width">
           <label for="restore-description">Description</label>
           <textarea id="restore-description" class="form-control" placeholder="Product Description" readonly></textarea>
         </div>
-        
+
         <!-- Details -->
         <div class="form-group full-width">
           <label for="restore-details">Details</label>
-          <textarea id="restore-details" class="form-control" placeholder="Product Details (one per line)" readonly></textarea>
+          <textarea id="restore-details" class="form-control" placeholder="Product Details (one per line)"
+            readonly></textarea>
         </div>
       </div>
-      
+
       <div class="form-actions">
         <input type="hidden" id="restore-productId" />
         <button type="submit" class="btn btn-primary">Restore Product</button>
@@ -805,10 +824,10 @@
     // Check authentication status
     function checkAuth() {
       const sessionExpires = localStorage.getItem('sessionExpires');
-      
-      if (localStorage.getItem('adminSession') !== 'true' || 
-          !sessionExpires || 
-          Date.now() > parseInt(sessionExpires)) {
+
+      if (localStorage.getItem('adminSession') !== 'true' ||
+        !sessionExpires ||
+        Date.now() > parseInt(sessionExpires)) {
         // Session expired or not logged in
         endSession();
         window.location.href = 'admin-login.html';
@@ -854,69 +873,44 @@
     // Initialize the database
     function initDB() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SenenProductsDB', 4);
-        
+        const request = indexedDB.open('SenenProductsDB', 6);
+
         request.onupgradeneeded = (event) => {
           const db = event.target.result;
           const oldVersion = event.oldVersion;
-          
+
           if (oldVersion < 1) {
-            // Initial version
             const productsStore = db.createObjectStore('products', { keyPath: 'id' });
-            productsStore.createIndex('byActive', 'isActive', { unique: false }); // Add index for active status
+            productsStore.createIndex('byActive', 'isActive', { unique: false });
+            // Add maxCount to new products
             const store = db.createObjectStore('productImages', { keyPath: ['productId', 'index'] });
             store.createIndex('byProduct', 'productId', { unique: false });
           }
 
-          // Add this to ensure the index exists even if the database already existed
-          if (!db.objectStoreNames.contains('products')) {
-            const productsStore = db.createObjectStore('products', { keyPath: 'id' });
-            productsStore.createIndex('byActive', 'isActive', { unique: false });
-          } else {
-            const productsStore = event.target.transaction.objectStore('products');
-            if (!productsStore.indexNames.contains('byActive')) {
-              productsStore.createIndex('byActive', 'isActive', { unique: false });
-            }
-          }
-          
-          if (oldVersion < 2) {
-            // Migration to store Blobs instead of Data URLs
+          // For existing databases, we need to handle data migration
+          if (oldVersion < 6) { // Increment version number
             const transaction = event.target.transaction;
-            const oldStore = transaction.objectStore('productImages');
-            const newStore = db.createObjectStore('productImages_new', { keyPath: ['productId', 'index'] });
-            newStore.createIndex('byProduct', 'productId', { unique: false });
-            
-            oldStore.getAll().onsuccess = (e) => {
-              const allImages = e.target.result;
-              allImages.forEach(image => {
-                if (image.imageData && !image.imageBlob) {
-                  fetch(image.imageData)
-                    .then(res => res.blob())
-                    .then(blob => {
-                      newStore.add({
-                        productId: image.productId,
-                        imageBlob: blob,
-                        imageName: image.imageName,
-                        index: image.index
-                      });
-                    });
-                } else if (image.imageBlob) {
-                  newStore.add(image);
+            const store = transaction.objectStore('products');
+
+            // Get all products and add maxCount field
+            store.getAll().onsuccess = function (e) {
+              const products = e.target.result;
+              products.forEach(product => {
+                if (product.maxCount === undefined) {
+                  product.maxCount = 0; // Default value
+                  store.put(product);
                 }
               });
             };
-            
-            db.deleteObjectStore('productImages');
-            newStore.name = 'productImages';
           }
         };
-        
+
         request.onsuccess = (event) => {
           productsDb = event.target.result;
-          
+
           // Open orders DB
-          const ordersRequest = indexedDB.open('SenenOrdersDB', 4);
-          
+          const ordersRequest = indexedDB.open('SenenOrdersDB', 6);
+
           ordersRequest.onupgradeneeded = (e) => {
             const db = e.target.result;
             if (!db.objectStoreNames.contains('orders')) {
@@ -925,17 +919,17 @@
               store.createIndex('byStatus', 'status', { unique: false });
             }
           };
-          
+
           ordersRequest.onsuccess = (e) => {
             db = e.target.result;
             resolve();
           };
-          
+
           ordersRequest.onerror = (e) => {
             reject(e.target.error);
           };
         };
-        
+
         request.onerror = (event) => {
           reject(event.target.error);
         };
@@ -972,7 +966,7 @@
             const store = transaction.objectStore('productImages');
             const index = store.index('byProduct');
             const request = index.openCursor(IDBKeyRange.only(product.id));
-            
+
             request.onsuccess = (event) => {
               const cursor = event.target.result;
               if (cursor) {
@@ -994,11 +988,11 @@
           await new Promise((resolve, reject) => {
             const transaction = productsDb.transaction(['productImages'], 'readwrite');
             const store = transaction.objectStore('productImages');
-            const request = store.add({ 
-              productId: product.id, 
+            const request = store.add({
+              productId: product.id,
               imageBlob: file,
               imageName: file.name,
-              index 
+              index
             });
             request.onsuccess = () => resolve();
             request.onerror = () => reject(request.error);
@@ -1011,34 +1005,23 @@
 
     // Get products from IndexedDB
     async function getProductsFromDB() {
-    return new Promise((resolve) => {
-      const transaction = productsDb.transaction(['products'], 'readonly');
-      const store = transaction.objectStore('products');
-      
-      // Check if the index exists
-      if (!store.indexNames.contains('byActive')) {
-        // If index doesn't exist, fall back to getting all products and filtering in memory
+      return new Promise((resolve) => {
+        const transaction = productsDb.transaction(['products'], 'readonly');
+        const store = transaction.objectStore('products');
         const request = store.getAll();
+
         request.onsuccess = (event) => {
           const allProducts = event.target.result || [];
-          // Filter active products in memory
-          const activeProducts = allProducts.filter(product => product.isActive !== false);
+          // Filter active products in memory if index doesn't exist
+          const activeProducts = allProducts.filter(product =>
+            product.isActive !== false // Include if undefined or true
+          );
           resolve(activeProducts);
         };
-        request.onerror = () => resolve([]);
-      } else {
-        // If index exists, use it
-        const index = store.index('byActive');
-        const request = index.getAll(IDBKeyRange.only(true)); // Only get active products
-        
-        request.onsuccess = (event) => {
-          resolve(event.target.result || []);
-        };
-        request.onerror = () => resolve([]);
-      }
-    });
-  }
 
+        request.onerror = () => resolve([]);
+      });
+    }
     // Get image info for a product from IndexedDB
     async function getProductImageInfo(productId) {
       return new Promise((resolve) => {
@@ -1046,7 +1029,7 @@
         const store = transaction.objectStore('productImages');
         const index = store.index('byProduct');
         const request = index.getAll(IDBKeyRange.only(productId));
-        
+
         request.onsuccess = (event) => {
           const imageInfo = (event.target.result || [])
             .sort((a, b) => a.index - b.index)
@@ -1059,7 +1042,7 @@
             });
           resolve(imageInfo);
         };
-        
+
         request.onerror = () => resolve([]);
       });
     }
@@ -1073,7 +1056,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.get(productId);
-          
+
           request.onsuccess = (event) => resolve(event.target.result);
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1091,7 +1074,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.put(product);
-          
+
           request.onsuccess = () => resolve();
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1107,16 +1090,17 @@
       try {
         const products = await getProductsFromDB();
         table.innerHTML = '';
-        
+
         for (const product of products) {
           const imageInfo = await getProductImageInfo(product.id);
           const imagesText = imageInfo.map(info => info.name).join(', ');
-          
+
           const row = document.createElement('tr');
           row.innerHTML = `
             <td class="image-names">${imagesText}</td>
             <td>${product.name}</td>
             <td>₹${product.price}</td>
+            <td>${product.maxCount}</td>
             <td>
               <div class="action-buttons">
                 <button class="icon-btn edit-btn" data-id="${product.id}" title="Edit">&#9998;</button>
@@ -1125,7 +1109,7 @@
             </td>
           `;
           table.appendChild(row);
-          
+
           // Add event listeners directly to the new buttons
           row.querySelector('.edit-btn').addEventListener('click', () => editProduct(product.id));
           row.querySelector('.delete-btn').addEventListener('click', () => showModal(product.id));
@@ -1143,7 +1127,8 @@
       const description = document.getElementById('description').value;
       const details = document.getElementById('details').value.split('\n').filter(item => item.trim() !== '');
       const imageInput = document.getElementById('image');
-      
+      const maxCount = parseInt(document.getElementById('maxCount').value || 1);
+
       // Get the files in the order they appear in the preview
       const previewContainer = document.getElementById('imagePreview');
       const previewElements = Array.from(previewContainer.querySelectorAll('.preview-image'));
@@ -1159,10 +1144,11 @@
 
       try {
         const productId = editIndex !== -1 ? editIndex : Date.now().toString();
-        const newProduct = { 
+        const newProduct = {
           id: productId,
-          name, 
-          price, 
+          name,
+          price,
+          maxCount,
           description,
           details,
           imageFiles: orderedFiles,
@@ -1170,7 +1156,7 @@
         };
 
         await saveProductToDB(newProduct);
-        
+
         document.querySelector('form').reset();
         document.getElementById('imagePreview').innerHTML = '';
         document.getElementById('submitBtn').textContent = 'Add Product';
@@ -1189,48 +1175,49 @@
         const transaction = productsDb.transaction(['products'], 'readonly');
         const store = transaction.objectStore('products');
         const request = store.get(productId);
-        
+
         request.onsuccess = async (event) => {
           const product = event.target.result;
           if (product) {
             document.getElementById('name').value = product.name;
             document.getElementById('price').value = product.price;
+            document.getElementById('maxCount').value = product.maxCount;
             document.getElementById('description').value = product.description || '';
             document.getElementById('details').value = product.details ? product.details.join('\n') : '';
             document.getElementById('submitBtn').textContent = 'Update Product';
             editIndex = product.id;
-            
+
             // Load images for editing
             const imageInfo = await getProductImageInfo(productId);
             const previewContainer = document.getElementById('imagePreview');
             previewContainer.innerHTML = '';
-            
+
             // Create a DataTransfer object to hold the files
             const dataTransfer = new DataTransfer();
-            
+
             for (const [index, info] of imageInfo.entries()) {
               // Fetch the blob to create a File object
               const response = await fetch(info.url);
               const blob = await response.blob();
               const file = new File([blob], info.name, { type: blob.type });
               dataTransfer.items.add(file);
-              
+
               // Create preview
               const previewDiv = document.createElement('div');
               previewDiv.className = 'preview-image';
               previewDiv.dataset.index = index;
               previewDiv.draggable = true;
-              
+
               previewDiv.innerHTML = `
                 <img src="${info.url}" alt="Preview">
                 <button class="remove-btn" data-index="${index}">×</button>
                 <button class="move-handle" data-index="${index}">↕</button>
               `;
-              
+
               previewContainer.appendChild(previewDiv);
               setupDragAndDrop(previewDiv);
             }
-            
+
             // Update the file input
             const fileInput = document.getElementById('image');
             fileInput.files = dataTransfer.files;
@@ -1243,22 +1230,22 @@
 
     // Setup drag and drop for image reordering
     function setupDragAndDrop(element) {
-      element.addEventListener('dragstart', function(e) {
+      element.addEventListener('dragstart', function (e) {
         e.dataTransfer.setData('text/plain', this.dataset.index);
         this.classList.add('dragging');
       });
-      
-      element.addEventListener('dragend', function() {
+
+      element.addEventListener('dragend', function () {
         this.classList.remove('dragging');
       });
     }
 
     // Handle drop events for reordering
-    document.getElementById('imagePreview').addEventListener('dragover', function(e) {
+    document.getElementById('imagePreview').addEventListener('dragover', function (e) {
       e.preventDefault();
       const dragging = document.querySelector('.preview-image.dragging');
       const afterElement = getDragAfterElement(this, e.clientY);
-      
+
       if (afterElement == null) {
         this.appendChild(dragging);
       } else {
@@ -1268,11 +1255,11 @@
 
     function getDragAfterElement(container, y) {
       const draggableElements = [...container.querySelectorAll('.preview-image:not(.dragging)')];
-      
+
       return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
-        
+
         if (offset < 0 && offset > closest.offset) {
           return { offset: offset, element: child };
         } else {
@@ -1282,48 +1269,48 @@
     }
 
     // Handle image removal
-    document.getElementById('imagePreview').addEventListener('click', function(e) {
+    document.getElementById('imagePreview').addEventListener('click', function (e) {
       if (e.target.classList.contains('remove-btn')) {
         const index = e.target.dataset.index;
         const fileInput = document.getElementById('image');
         const files = Array.from(fileInput.files);
-        
+
         // Remove the file from the input
         files.splice(index, 1);
-        
+
         // Create new DataTransfer object and update files
         const dataTransfer = new DataTransfer();
         files.forEach(file => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
-        
+
         // Trigger change event to update preview
         fileInput.dispatchEvent(new Event('change'));
       }
     });
 
     // Handle image selection and preview
-    document.getElementById('image').addEventListener('change', function(e) {
+    document.getElementById('image').addEventListener('change', function (e) {
       const files = e.target.files;
       const previewContainer = document.getElementById('imagePreview');
       previewContainer.innerHTML = '';
-      
+
       if (!files || files.length === 0) return;
-      
+
       // Create preview for each file
       Array.from(files).forEach((file, index) => {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           const previewDiv = document.createElement('div');
           previewDiv.className = 'preview-image';
           previewDiv.dataset.index = index;
           previewDiv.draggable = true;
-          
+
           previewDiv.innerHTML = `
             <img src="${e.target.result}" alt="Preview">
             <button class="remove-btn" data-index="${index}">×</button>
             <button class="move-handle" data-index="${index}">↕</button>
           `;
-          
+
           previewContainer.appendChild(previewDiv);
           setupDragAndDrop(previewDiv);
         };
@@ -1336,9 +1323,9 @@
       // Remove any existing modals first
       const existingModals = document.querySelectorAll('.modal');
       existingModals.forEach(modal => modal.remove());
-      
+
       deleteIndex = productId;
-      
+
       // Create a fresh modal
       const modal = document.createElement('div');
       modal.className = 'modal';
@@ -1352,11 +1339,11 @@
           </div>
         </div>
       `;
-      
+
       // Add event listeners to the new buttons
       modal.querySelector('.confirm-btn').addEventListener('click', confirmDelete);
       modal.querySelector('.cancel-btn').addEventListener('click', () => modal.remove());
-      
+
       document.body.appendChild(modal);
       modal.style.display = 'flex';
     }
@@ -1375,7 +1362,7 @@
         try {
           await deleteProductFromDB(deleteIndex);
           await renderProducts();
-          
+
           // Remove the modal after successful deletion
           const modal = document.getElementById('deleteModal');
           if (modal) modal.remove();
@@ -1399,11 +1386,11 @@
         const transaction = db.transaction(['orders'], 'readonly');
         const store = transaction.objectStore('orders');
         const request = store.getAll();
-        
+
         request.onsuccess = (event) => {
           resolve(event.target.result || []);
         };
-        
+
         request.onerror = (event) => {
           reject(event.target.error);
         };
@@ -1421,7 +1408,7 @@
         const store = transaction.objectStore('orders');
         // Ensure consistent numeric ID handling
         const request = store.get(Number(orderId));
-        
+
         request.onsuccess = (event) => {
           const result = event.target.result;
           if (!result) {
@@ -1430,7 +1417,7 @@
             resolve(result);
           }
         };
-        
+
         request.onerror = (event) => {
           reject(new Error('Database error: ' + event.target.error));
         };
@@ -1442,11 +1429,11 @@
         const transaction = productsDb.transaction(['products'], 'readonly');
         const store = transaction.objectStore('products');
         const request = store.get(productId);
-        
+
         request.onsuccess = (event) => {
           resolve(event.target.result || null);
         };
-        
+
         request.onerror = () => resolve(null);
       });
     }
@@ -1457,14 +1444,14 @@
         const store = transaction.objectStore('productImages');
         const index = store.index('byProduct');
         const request = index.getAll(IDBKeyRange.only(productId));
-        
+
         request.onsuccess = (event) => {
           const images = (event.target.result || [])
             .sort((a, b) => a.index - b.index)
             .map(item => item.imageBlob ? URL.createObjectURL(item.imageBlob) : '');
           resolve(images);
         };
-        
+
         request.onerror = () => resolve([]);
       });
     }
@@ -1478,28 +1465,28 @@
 
         const transaction = db.transaction(['orders'], 'readwrite');
         const store = transaction.objectStore('orders');
-        
+
         // Convert orderId to number for consistency
         const numericOrderId = typeof orderId === 'string' ? Number(orderId) : orderId;
-        
+
         const getRequest = store.get(numericOrderId);
-        
+
         getRequest.onsuccess = (event) => {
           const order = event.target.result;
           if (!order) {
             reject(new Error(`Order with ID ${numericOrderId} not found`));
             return;
           }
-          
+
           order.status = newStatus;
           order.lastUpdated = new Date().toISOString();
-          
+
           const putRequest = store.put(order);
-          
+
           putRequest.onsuccess = () => resolve(order);
           putRequest.onerror = (event) => reject(event.target.error);
         };
-        
+
         getRequest.onerror = (event) => reject(event.target.error);
       });
     }
@@ -1507,23 +1494,23 @@
     async function applyFilters() {
       const statusFilter = document.getElementById('statusFilter').value;
       const dateFilter = document.getElementById('dateFilter').value;
-      
+
       showLoading();
       try {
         const allOrders = await getOrdersFromDB();
         let filteredOrders = [...allOrders];
-        
+
         // Apply status filter
         if (statusFilter !== 'all') {
           filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
         }
-        
+
         // Apply date filter
         const now = new Date();
         if (dateFilter !== 'all') {
           filteredOrders = filteredOrders.filter(order => {
             const orderDate = new Date(order.date);
-            
+
             if (dateFilter === 'today') {
               return orderDate.toDateString() === now.toDateString();
             } else if (dateFilter === 'week') {
@@ -1531,13 +1518,13 @@
               startOfWeek.setDate(now.getDate() - now.getDay());
               return orderDate >= startOfWeek;
             } else if (dateFilter === 'month') {
-              return orderDate.getMonth() === now.getMonth() && 
-                     orderDate.getFullYear() === now.getFullYear();
+              return orderDate.getMonth() === now.getMonth() &&
+                orderDate.getFullYear() === now.getFullYear();
             }
             return true;
           });
         }
-        
+
         renderFilteredOrders(filteredOrders);
       } catch (error) {
         console.error('Error applying filters:', error);
@@ -1550,22 +1537,22 @@
     async function renderFilteredOrders(orders) {
       const ordersGrid = document.getElementById('ordersGrid');
       ordersGrid.innerHTML = '';
-      
+
       if (orders.length === 0) {
         ordersGrid.innerHTML = '<p>No orders match the selected filters</p>';
         return;
       }
-      
+
       // Sort orders by date (newest first)
       orders.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
+
       for (const order of orders) {
         const orderCard = document.createElement('div');
         orderCard.className = 'order-card';
-        
+
         const statusClass = `status-${order.status || 'pending'}`;
         const amount = (order.price || 0) * (order.quantity || 1);
-        
+
         orderCard.innerHTML = `
           <div class="order-header">
             <div>
@@ -1592,7 +1579,7 @@
             </button>
           </div>
         `;
-        
+
         ordersGrid.appendChild(orderCard);
       }
     }
@@ -1626,7 +1613,7 @@
     }
 
     function getStatusClass(status) {
-      switch(status) {
+      switch (status) {
         case 'pending': return 'status-pending';
         case 'created': return 'status-created';
         case 'shipped': return 'status-shipped';
@@ -1637,21 +1624,21 @@
 
     // Function to get deleted products from IndexedDB
     async function getDeletedProductsFromDB() {
-    return new Promise((resolve) => {
-      const transaction = productsDb.transaction(['products'], 'readonly');
-      const store = transaction.objectStore('products');
-      const request = store.getAll();
-      
-      request.onsuccess = (event) => {
-        const allProducts = event.target.result || [];
-        // Filter inactive products in memory
-        const deletedProducts = allProducts.filter(product => product.isActive === false);
-        resolve(deletedProducts);
-      };
-      
-      request.onerror = () => resolve([]);
-    });
-  }
+      return new Promise((resolve) => {
+        const transaction = productsDb.transaction(['products'], 'readonly');
+        const store = transaction.objectStore('products');
+        const request = store.getAll();
+
+        request.onsuccess = (event) => {
+          const allProducts = event.target.result || [];
+          // Filter inactive products in memory
+          const deletedProducts = allProducts.filter(product => product.isActive === false);
+          resolve(deletedProducts);
+        };
+
+        request.onerror = () => resolve([]);
+      });
+    }
 
     // Function to render deleted products
     async function renderDeletedProducts() {
@@ -1660,11 +1647,11 @@
         const products = await getDeletedProductsFromDB();
         const tableBody = document.querySelector("#deletedProductTable tbody");
         tableBody.innerHTML = '';
-        
+
         for (const product of products) {
           const imageInfo = await getProductImageInfo(product.id);
           const imagesText = imageInfo.map(info => info.name).join(', ');
-          
+
           tableBody.innerHTML += `
             <tr>
               <td class="image-names">${imagesText}</td>
@@ -1692,7 +1679,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.get(productId);
-          
+
           request.onsuccess = (event) => resolve(event.target.result);
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1710,7 +1697,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.put(product);
-          
+
           request.onsuccess = () => resolve();
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1718,7 +1705,7 @@
         // Refresh both tables
         await renderProducts();
         await renderDeletedProducts();
-        
+
       } catch (error) {
         console.error('Error restoring product:', error);
         alert('Failed to restore product: ' + error.message);
@@ -1736,7 +1723,7 @@
           const transaction = productsDb.transaction(['products'], 'readonly');
           const store = transaction.objectStore('products');
           const request = store.get(productId);
-          
+
           request.onsuccess = (event) => resolve(event.target.result);
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1758,7 +1745,7 @@
         // Show image previews
         const previewContainer = document.getElementById('restore-imagePreview');
         previewContainer.innerHTML = '';
-        
+
         for (const [index, info] of imageInfo.entries()) {
           const previewDiv = document.createElement('div');
           previewDiv.className = 'preview-image';
@@ -1771,7 +1758,7 @@
         // Hide table and show form
         document.getElementById('deletedProductTable').style.display = 'none';
         document.getElementById('restoreForm').style.display = 'block';
-        
+
       } catch (error) {
         console.error('Error loading product for restore:', error);
         alert('Failed to load product: ' + error.message);
@@ -1789,11 +1776,11 @@
     // Function to handle restore confirmation
     function confirmRestore(e) {
       e.preventDefault();
-      
+
       // Hide any existing modals first
       const existingModals = document.querySelectorAll('.modal');
       existingModals.forEach(modal => modal.remove());
-      
+
       // Create and show confirmation modal
       const modal = document.createElement('div');
       modal.className = 'modal';
@@ -1808,7 +1795,7 @@
           </div>
         </div>
       `;
-      
+
       document.body.appendChild(modal);
     }
 
@@ -1816,7 +1803,7 @@
     // Function to actually perform the restore
     async function performRestore() {
       const productId = document.getElementById('restore-productId').value;
-      
+
       showLoading();
       try {
         // First get the product
@@ -1824,7 +1811,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.get(productId);
-          
+
           request.onsuccess = (event) => resolve(event.target.result);
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1842,7 +1829,7 @@
           const transaction = productsDb.transaction(['products'], 'readwrite');
           const store = transaction.objectStore('products');
           const request = store.put(product);
-          
+
           request.onsuccess = () => resolve();
           request.onerror = (event) => reject(event.target.error);
         });
@@ -1850,14 +1837,14 @@
         // Hide the modal
         const modal = document.getElementById('restoreConfirmModal');
         if (modal) modal.remove();
-        
+
         // Reset the form and show table
         cancelRestore();
-        
+
         // Refresh both tables
         await renderProducts();
         await renderDeletedProducts();
-        
+
       } catch (error) {
         console.error('Error restoring product:', error);
         alert('Failed to restore product: ' + error.message);
@@ -1871,13 +1858,13 @@
         tab.classList.remove('active');
       });
       document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-      
+
       // Update active content
       document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
       });
       document.getElementById(`${tabName}-tab`).classList.add('active');
-      
+
       // Load appropriate data
       if (tabName === 'orders') {
         renderOrders();
@@ -1889,7 +1876,7 @@
     }
 
     // Event delegation for dynamic elements
-    document.addEventListener('change', async function(event) {
+    document.addEventListener('change', async function (event) {
       // Handle status change specifically for select elements
       if (event.target.classList.contains('status-select')) {
         const orderId = event.target.getAttribute('data-order-id');
@@ -1898,29 +1885,29 @@
       }
     });
 
-    document.addEventListener('click', async function(event) {
+    document.addEventListener('click', async function (event) {
       // Handle view details click on the eye icon or its parent
-      if (event.target.classList.contains('view-btn') || 
-          (event.target.parentElement && event.target.parentElement.classList.contains('view-btn'))) {
-        const orderId = event.target.getAttribute('data-order-id') || 
-        event.target.parentElement.getAttribute('data-order-id');
+      if (event.target.classList.contains('view-btn') ||
+        (event.target.parentElement && event.target.parentElement.classList.contains('view-btn'))) {
+        const orderId = event.target.getAttribute('data-order-id') ||
+          event.target.parentElement.getAttribute('data-order-id');
         // Redirect to order-details.html with the order ID
         window.location.href = `order-details.html?id=${orderId}`;
       }
     });
 
     // Initialize the application
-    window.onload = function() {
+    window.onload = function () {
       if (!checkAuth()) return;
-      
+
       // Set up activity listeners to reset session timer
       document.addEventListener('mousemove', resetSessionTimer);
       document.addEventListener('keypress', resetSessionTimer);
       document.addEventListener('click', resetSessionTimer);
-      
+
       // Add logout button
       setupLogoutButton();
-      
+
       // Initialize the database and render products
       initDB().then(() => {
         renderProducts();
@@ -1931,4 +1918,5 @@
     };
   </script>
 </body>
+
 </html>
